@@ -79,9 +79,9 @@ class Logger {
 	activity(title: string, data?: Record<string, any>): void {
 		const icon = Icons.ACTIVITY;
 		const time = this.getTimestamp();
-		const nameTag = this.createTag(this._name, ColorText.ACTIVITY);
+		const nameTag = chalk.magenta(`[${this._name}]`);
 		
-		let message = `${chalk.dim(time)} ${nameTag} ${icon} ${ColorText.ACTIVITY.bold(title)}`;
+		let message = `${chalk.dim(time)} ${nameTag} ${icon} ${chalk.magenta.bold(title)}`;
 		
 		if (data) {
 			const dataStr = Object.entries(data)
@@ -100,11 +100,13 @@ class Logger {
 	private formatMessage(level: ColorType, message: string): string {
 		const icon = Icons[level as keyof typeof Icons] || '';
 		const time = this.getTimestamp();
-		const nameTag = this.createTag(this._name, ColorText[level]);
-		const levelTag = this.createTag(level, ColorText[level]);
-		const coloredMessage = ColorText[level](message);
+		const colorFn = ColorText[level as keyof typeof ColorText];
 		
-		return `${chalk.dim(time)} ${nameTag} ${levelTag} ${icon}  ${coloredMessage}`;
+		// Create tags with appropriate colors
+		const nameTag = `[${this._name}]`;
+		const levelTag = `[${level}]`;
+		
+		return `${chalk.dim(time)} ${colorFn(nameTag)} ${colorFn(levelTag)} ${icon}  ${colorFn(message)}`;
 	}
 
 	/**
